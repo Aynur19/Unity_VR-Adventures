@@ -1,16 +1,31 @@
 using UnityEngine;
 
-public class SwordController : MonoBehaviour
+public class SwordController : OVRGrabber
 {
-    //Quaternion defaultRotation;
+    private OVRHand m_hand;
+    private float pinchTreshold = 0.7f;
 
-    //void Awake()
-    //{
-    //    defaultRotation = transform.rotation;
-    //}
+	private void Start()
+	{
+		m_hand = GetComponent<OVRHand>();
+	}
 
-    //void LateUpdate()
-    //{
-    //    transform.rotation = defaultRotation;
-    //}
+	private void Update()
+	{
+		CheckIndexPinch();
+	}
+
+	private void CheckIndexPinch()
+	{
+		float pinchStrength = m_hand.GetFingerPinchStrength(OVRHand.HandFinger.Index);
+
+		if (!m_grabbedObj && pinchStrength > pinchTreshold && m_grabCandidates.Count > 0)
+		{
+			GrabBegin();
+		}
+		else if (m_grabbedObj && (pinchStrength > pinchTreshold))
+		{
+			GrabEnd();
+		}
+	}
 }
